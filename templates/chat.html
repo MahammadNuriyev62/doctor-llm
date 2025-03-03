@@ -24,12 +24,29 @@
             class="logo"
             onerror="this.src='https://via.placeholder.com/30'"
           />
-          <h1>Petko Chat (Your personal Doctor)</h1>
+          <h1>Llama Chat</h1>
         </div>
         <button id="new-chat-btn" class="new-chat-btn">
           <i class="fa-solid fa-plus"></i> New chat
         </button>
+
+        <!-- Chat history list -->
+        <div class="history-container">
+          <h3>Chat History</h3>
+          <div id="chat-history-list" class="history-list">
+            <!-- Chat history items will be added here dynamically -->
+            <div class="history-loading">Loading history...</div>
+          </div>
+        </div>
+
         <div class="sidebar-footer">
+          <div class="user-info">
+            <i class="fa-solid fa-user"></i>
+            <span id="username-display">User</span>
+          </div>
+          <button id="logout-btn" class="logout-btn">
+            <i class="fa-solid fa-sign-out-alt"></i> Logout
+          </button>
           <div class="model-info">
             <span>Model: Llama 3.2 1B</span>
           </div>
@@ -42,7 +59,7 @@
           <button id="mobile-menu-btn" class="mobile-menu-btn">
             <i class="fa-solid fa-bars"></i>
           </button>
-          <h2>Llama 3.2 Chat</h2>
+          <h2 id="chat-title">Llama 3.2 Chat</h2>
         </div>
 
         <!-- Messages area -->
@@ -79,6 +96,40 @@
         </div>
       </div>
     </div>
+
+    <script>
+      // Check authentication
+      document.addEventListener("DOMContentLoaded", () => {
+        const token = localStorage.getItem("auth_token");
+        if (!token) {
+          window.location.href = "/login";
+          return;
+        }
+
+        // Display username
+        const username = localStorage.getItem("username");
+        if (username) {
+          document.getElementById("username-display").textContent = username;
+        }
+
+        // Load chat history
+        loadChatHistory();
+
+        // Check if there's a chat ID in URL
+        const pathParts = window.location.pathname.split("/");
+        if (pathParts.length > 2 && pathParts[1] === "chat") {
+          const chatId = pathParts[2];
+          loadChat(chatId);
+        }
+      });
+
+      // Logout function
+      document.getElementById("logout-btn").addEventListener("click", () => {
+        localStorage.removeItem("auth_token");
+        localStorage.removeItem("username");
+        window.location.href = "/login";
+      });
+    </script>
 
     <script src="{{ url_for('static', path='/js/chat.js') }}"></script>
   </body>

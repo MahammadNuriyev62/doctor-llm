@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login - Llama Chat</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', path='/css/auth.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+  </head>
+  <body>
+    <div class="auth-container">
+      <div class="auth-card">
+        <div class="auth-header">
+          <img
+            src="{{ url_for('static', path='/img/llama-logo.png') }}"
+            alt="Llama Logo"
+            class="logo"
+            onerror="this.src='https://via.placeholder.com/60'"
+          />
+          <h1>Llama Chat</h1>
+        </div>
+
+        <h2>Login</h2>
+
+        <div id="error-message" class="error-message hidden"></div>
+
+        <form id="login-form" class="auth-form">
+          <div class="form-group">
+            <label for="username">Username</label>
+            <input
+              type="text"
+              id="username"
+              name="username"
+              placeholder="Enter your username"
+              required
+            />
+          </div>
+
+          <button type="submit" class="auth-button">
+            Login <i class="fas fa-arrow-right"></i>
+          </button>
+        </form>
+
+        <div class="auth-footer">
+          <p>Don't have an account? <a href="/register">Register</a></p>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      document
+        .getElementById("login-form")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+
+          const username = document.getElementById("username").value.trim();
+          const errorMessage = document.getElementById("error-message");
+
+          try {
+            errorMessage.classList.add("hidden");
+
+            const response = await fetch("/api/login", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ username }),
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+              throw new Error(data.detail || "Login failed");
+            }
+
+            // Store token in localStorage
+            localStorage.setItem("auth_token", data.access_token);
+            localStorage.setItem("username", username);
+
+            // Redirect to chat page
+            window.location.href = "/chat";
+          } catch (error) {
+            errorMessage.textContent = error.message;
+            errorMessage.classList.remove("hidden");
+          }
+        });
+    </script>
+  </body>
+</html>
