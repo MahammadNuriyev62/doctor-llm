@@ -572,10 +572,6 @@ function startNewChat() {
       <div class="welcome-screen">
           <img src="/static/img/llama-logo.png" alt="LLM Doctor Logo" class="welcome-logo" onerror="this.src='https://via.placeholder.com/100'">
           <h2>How can I help you with your health today?</h2>
-          <p class="disclaimer-text">
-              <i class="fas fa-info-circle"></i> 
-              Remember: LLM Doctor provides information for educational purposes only and is not a substitute for professional medical advice.
-          </p>
       </div>
   `;
 
