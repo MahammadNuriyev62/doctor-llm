@@ -13,6 +13,22 @@ from datetime import datetime
 import uuid
 from pymongo import MongoClient
 from jose import JWTError, jwt
+from pydantic_settings import BaseSettings
+
+
+class Settings(BaseSettings):
+    mongo_uri: str
+    secret_key: str
+    algorithm: str
+    hugging_face_token: str
+
+    # load from .env
+    class Config:
+        env_file = ".env"
+
+
+settings = Settings()  # type: ignore
+
 
 # Initialize FastAPI app
 app = FastAPI()
@@ -25,8 +41,7 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 
 # MongoDB Connection
 try:
-    mongo_uri = "mongodb+srv://root:A9Ygi9A_L7PeXz$@cluster0.tmoe7.mongodb.net/"
-    client = MongoClient(mongo_uri)
+    client = MongoClient(settings.mongo_uri)
     db = client.llama_chat_db
     # Test connection
     client.admin.command("ping")
@@ -36,8 +51,8 @@ except Exception as e:
     raise
 
 # JWT settings
-SECRET_KEY = "your-secret-key"  # Change this in production
-ALGORITHM = "HS256"
+SECRET_KEY = settings.secret_key  # Change this in production
+ALGORITHM = settings.algorithm
 security = HTTPBearer()
 
 # Replace this with your actual Hugging Face token
@@ -45,9 +60,12 @@ token = "hello"
 
 # Model & tokenizer
 model_name = "meta-llama/Llama-3.2-1B-Instruct"
-tokenizer = AutoTokenizer.from_pretrained(model_name, token=token)
+tokenizer = AutoTokenizer.from_pretrained(model_name, token=settings.hugging_face_token)
 model = AutoModelForCausalLM.from_pretrained(
-    model_name, device_map="auto", torch_dtype=torch.bfloat16, token=token
+    model_name,
+    device_map="auto",
+    torch_dtype=torch.bfloat16,
+    token=settings.hugging_face_token,
 )
 
 
@@ -182,17 +200,13 @@ async def chat_endpoint(messages: List[Message], user=Depends(get_current_user))
         [ {role: "system"|"user"|"assistant", content: "..."} ]
     Returns streaming tokens for the assistant's newest response.
     """
-    # Build the prompt from all previous messages
-    prompt = ""
-    for msg in messages:
-        if msg.role == RoleEnum.system:
-            prompt += f"System: {msg.content}\n"
-        elif msg.role == RoleEnum.user:
-            prompt += f"User: {msg.content}\n"
-        elif msg.role == RoleEnum.assistant:
-            prompt += f"Assistant: {msg.content}\n"
-    # The model should continue with an Assistant reply
-    prompt += "Assistant:"
+    # Convert our Message objects to the format expected by the tokenizer
+    chat_messages = [{"role": msg.role, "content": msg.content} for msg in messages]
+
+    # Use the model's built-in chat template
+    prompt = tokenizer.apply_chat_template(
+        chat_messages, tokenize=False, add_generation_prompt=True
+    )
 
     return StreamingResponse(chat_stream(prompt), media_type="text/plain")
 
