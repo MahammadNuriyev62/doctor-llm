@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Partnerships - LLM Doctor</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', path='/css/pages.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+  </head>
+  <body>
+    <!-- Header -->
+    <header class="header">
+      <div class="container">
+        <div class="logo">
+          <a href="/">
+            <img
+              src="{{ url_for('static', path='/img/llama-logo.png') }}"
+              alt="LLM Doctor Logo"
+              onerror="this.src='https://via.placeholder.com/40'"
+            />
+            <span>LLM Doctor</span>
+          </a>
+        </div>
+        <nav class="nav">
+          <ul class="nav-links">
+            <li><a href="/">Home</a></li>
+            <li class="dropdown">
+              <a href="#" class="active"
+                >Company <i class="fas fa-chevron-down"></i
+              ></a>
+              <ul class="dropdown-menu">
+                <li><a href="/about">About Us</a></li>
+                <li><a href="/medical-team">Medical Team</a></li>
+                <li><a href="/partnerships" class="active">Partnerships</a></li>
+              </ul>
+            </li>
+            <li><a href="/technology">Our Technology</a></li>
+            <li class="dropdown">
+              <a href="#">Legal <i class="fas fa-chevron-down"></i></a>
+              <ul class="dropdown-menu">
+                <li><a href="/privacy">Privacy</a></li>
+                <li><a href="/terms">Terms</a></li>
+                <li><a href="/medical-disclaimer">Medical Disclaimer</a></li>
+              </ul>
+            </li>
+          </ul>
+        </nav>
+        <div class="auth-buttons">
+          <a href="/login" class="login-btn">Login</a>
+          <a href="/register" class="signup-btn">Sign Up</a>
+        </div>
+        <button class="mobile-menu-btn">
+          <i class="fas fa-bars"></i>
+        </button>
+      </div>
+    </header>
+
+    <!-- Page Header -->
+    <section class="page-header">
+      <div class="container">
+        <h1>Our Partnerships</h1>
+        <p>Collaborating to advance healthcare access and AI innovation</p>
+      </div>
+    </section>
+
+    <!-- Partnerships Introduction -->
+    <section class="content-section">
+      <div class="container">
+        <div class="content-grid">
+          <div class="content-text">
+            <h2>Working Together for Better Healthcare</h2>
+            <p>
+              At LLM Doctor, we believe that collaboration is essential to
+              advancing healthcare accessibility and AI ethics. We've partnered
+              with leading healthcare institutions, research organizations, and
+              technology companies to ensure that our platform provides the most
+              accurate, ethical, and helpful medical guidance possible.
+            </p>
+
+            <p>
+              Our partnerships span across four key areas: medical research,
+              technology development, healthcare access, and ethical AI
+              governance. Each collaboration strengthens our ability to deliver
+              high-quality medical information while maintaining the highest
+              standards of responsibility.
+            </p>
+
+            <div class="highlight-box">
+              <h3>Partnership Benefits</h3>
+              <ul>
+                <li>
+                  <strong>Enhanced Medical Knowledge:</strong> Access to the
+                  latest medical research and clinical guidelines
+                </li>
+                <li>
+                  <strong>Technology Improvement:</strong> Collaboration on AI
+                  model development and validation
+                </li>
+                <li>
+                  <strong>Expanded Reach:</strong> Bringing medical information
+                  to underserved communities
+                </li>
+                <li>
+                  <strong>Ethical Oversight:</strong> Independent review and
+                  guidance on AI healthcare applications
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div class="content-image">
+            <img
+              src="{{ url_for('static', path='/img/partnership.jpg') }}"
+              alt="Partnership handshake"
+              onerror="this.src='https://via.placeholder.com/500x300'"
+            />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Medical Partners -->
+    <section class="partners-section alt-bg">
+      <div class="container">
+        <h2>Medical Institution Partners</h2>
+        <p class="section-subtitle">
+          Leading healthcare organizations that collaborate with LLM Doctor
+        </p>
+
+        <div class="partners-grid">
+          <div class="partner-item">
+            <div class="partner-logo">
+              <img
+                src="{{ url_for('static', path='/img/partner-medical-1.png') }}"
+                alt="Medical Center Logo"
+                onerror="this.src='https://via.placeholder.com/200x100'"
+              />
+            </div>
+            <h3>Central Medical Center</h3>
+            <p>
+              Academic medical center providing clinical validation and
+              healthcare expertise
+            </p>
+          </div>
+
+          <div class="partner-item">
+            <div class="partner-logo">
+              <img
+                src="{{ url_for('static', path='/img/partner-medical-2.png') }}"
+                alt="Medical Research Institute Logo"
+                onerror="this.src='https://via.placeholder.com/200x100'"
+              />
+            </div>
+            <h3>Global Health Research Institute</h3>
+            <p>
+              Research organization conducting studies on AI-based healthcare
+              guidance
+            </p>
+          </div>
+
+          <div class="partner-item">
+            <div class="partner-logo">
+              <img
+                src="{{ url_for('static', path='/img/partner-medical-3.png') }}"
+                alt="Medical Association Logo"
+                onerror="this.src='https://via.placeholder.com/200x100'"
+              />
+            </div>
+            <h3>International Medical Association</h3>
+            <p>
+              Professional organization providing medical standards and
+              guidelines
+            </p>
+          </div>
+
+          <div class="partner-item">
+            <div class="partner-logo">
+              <img
+                src="{{ url_for('static', path='/img/partner-medical-4.png') }}"
+                alt="Healthcare System Logo"
+                onerror="this.src='https://via.placeholder.com/200x100'"
+              />
+            </div>
+            <h3>Regional Healthcare System</h3>
+            <p>
+              Healthcare provider network using LLM Doctor to enhance patient
+              education
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Technology Partners -->
+    <section class="partners-section">
+      <div class="container">
+        <h2>Technology Partners</h2>
+        <p class="section-subtitle">
+          Organizations that help power our AI technology
+        </p>
+
+        <div class="partners-grid">
+          <div class="partner-item">
+            <div class="partner-logo">
+              <img
+                src="{{ url_for('static', path='/img/partner-tech-1.png') }}"
+                alt="Tech Company Logo"
+                onerror="this.src='https://via.placeholder.com/200x100'"
+              />
+            </div>
+            <h3>AI Research Labs</h3>
+            <p>
+              AI research organization supporting model development and
+              enhancement
+            </p>
+          </div>
+
+          <div class="partner-item">
+            <div class="partner-logo">
+              <img
+                src="{{ url_for('static', path='/img/partner-tech-2.png') }}"
+                alt="Cloud Provider Logo"
+                onerror="this.src='https://via.placeholder.com/200x100'"
+              />
+            </div>
+            <h3>Global Cloud Services</h3>
+            <p>
+              Cloud infrastructure provider ensuring secure and scalable
+              operations
+            </p>
+          </div>
+
+          <div class="partner-item">
+            <div class="partner-logo">
+              <img
+                src="{{ url_for('static', path='/img/partner-tech-3.png') }}"
+                alt="Data Science Company Logo"
+                onerror="this.src='https://via.placeholder.com/200x100'"
+              />
+            </div>
+            <h3>Medical Data Systems</h3>
+            <p>
+              Medical data organization providing structured healthcare
+              information
+            </p>
+          </div>
+
+          <div class="partner-item">
+            <div class="partner-logo">
+              <img
+                src="{{ url_for('static', path='/img/partner-tech-4.png') }}"
+                alt="Security Company Logo"
+                onerror="this.src='https://via.placeholder.com/200x100'"
+              />
+            </div>
+            <h3>SecureHealth Solutions</h3>
+            <p>Healthcare security firm ensuring data protection and privacy</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Access Initiative Partners -->
+    <section class="partners-section alt-bg">
+      <div class="container">
+        <h2>Healthcare Access Partners</h2>
+        <p class="section-subtitle">
+          Organizations working with us to expand healthcare access
+        </p>
+
+        <div class="partners-grid">
+          <div class="partner-item">
+            <div class="partner-logo">
+              <img
+                src="{{ url_for('static', path='/img/partner-ngo-1.png') }}"
+                alt="NGO Logo"
+                onerror="this.src='https://via.placeholder.com/200x100'"
+              />
+            </div>
+            <h3>Global Health Access Initiative</h3>
+            <p>
+              NGO focused on bringing healthcare information to underserved
+              regions
+            </p>
+          </div>
+
+          <div class="partner-item">
+            <div class="partner-logo">
+              <img
+                src="{{ url_for('static', path='/img/partner-ngo-2.png') }}"
+                alt="Foundation Logo"
+                onerror="this.src='https://via.placeholder.com/200x100'"
+              />
+            </div>
+            <h3>Healthcare Education Foundation</h3>
+            <p>Foundation promoting health literacy and patient education</p>
+          </div>
+
+          <div class="partner-item">
+            <div class="partner-logo">
+              <img
+                src="{{ url_for('static', path='/img/partner-ngo-3.png') }}"
+                alt="Rural Health Logo"
+                onerror="this.src='https://via.placeholder.com/200x100'"
+              />
+            </div>
+            <h3>Rural Health Connect</h3>
+            <p>
+              Organization focused on healthcare access in rural communities
+            </p>
+          </div>
+
+          <div class="partner-item">
+            <div class="partner-logo">
+              <img
+                src="{{ url_for('static', path='/img/partner-ngo-4.png') }}"
+                alt="Senior Health Logo"
+                onerror="this.src='https://via.placeholder.com/200x100'"
+              />
+            </div>
+            <h3>Senior Health Alliance</h3>
+            <p>
+              Organization focused on healthcare access for elderly populations
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Featured Case Study -->
+    <section class="case-study-section">
+      <div class="container">
+        <h2>Partnership Spotlight</h2>
+        <div class="case-study">
+          <div class="case-study-image">
+            <img
+              src="{{ url_for('static', path='/img/case-study.jpg') }}"
+              alt="Rural healthcare clinic"
+              onerror="this.src='https://via.placeholder.com/500x300'"
+            />
+          </div>
+          <div class="case-study-content">
+            <h3>Improving Rural Healthcare Access</h3>
+            <p class="case-partner">In partnership with Rural Health Connect</p>
+            <p>
+              Our collaboration with Rural Health Connect has brought LLM Doctor
+              to over 50 rural communities with limited access to healthcare
+              providers. In these areas, LLM Doctor serves as a valuable
+              resource for initial health guidance, helping community members
+              determine when to seek professional care.
+            </p>
+
+            <div class="case-results">
+              <div class="result-item">
+                <span class="result-number">65%</span>
+                <span class="result-description"
+                  >Increase in appropriate clinic visits</span
+                >
+              </div>
+              <div class="result-item">
+                <span class="result-number">45%</span>
+                <span class="result-description"
+                  >Reduction in unnecessary emergency visits</span
+                >
+              </div>
+              <div class="result-item">
+                <span class="result-number">10,000+</span>
+                <span class="result-description">Rural residents assisted</span>
+              </div>
+            </div>
+
+            <a href="#" onclick="return false;" class="read-more-btn"
+              >Read Full Case Study <i class="fas fa-arrow-right"></i
+            ></a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Become a Partner CTA -->
+    <section class="cta-section">
+      <div class="container">
+        <h2>Interested in Partnering with LLM Doctor?</h2>
+        <p>
+          We're always looking for new collaborations to improve healthcare
+          access and AI technology
+        </p>
+        <a href="#" onclick="return false;" class="cta-btn"
+          >Contact Our Partnership Team</a
+        >
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="container">
+        <div class="footer-content">
+          <div class="footer-logo">
+            <img
+              src="{{ url_for('static', path='/img/llama-logo.png') }}"
+              alt="LLM Doctor Logo"
+              onerror="this.src='https://via.placeholder.com/30'"
+            />
+            <h3>LLM Doctor</h3>
+          </div>
+
+          <div class="footer-links">
+            <div class="link-group">
+              <h4>Service</h4>
+              <a href="/">Home</a>
+              <a href="/chat">Start Consultation</a>
+              <a href="/technology">Our Technology</a>
+            </div>
+
+            <div class="link-group">
+              <h4>Company</h4>
+              <a href="/about">About Us</a>
+              <a href="/medical-team">Medical Team</a>
+              <a href="/partnerships">Partnerships</a>
+            </div>
+
+            <div class="link-group">
+              <h4>Legal</h4>
+              <a href="/privacy">Privacy</a>
+              <a href="/terms">Terms</a>
+              <a href="/medical-disclaimer">Medical Disclaimer</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="copyright">
+          <p>
+            &copy; 2025 LLM Doctor. All rights reserved. Not a substitute for
+            professional medical advice.
+          </p>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      // Mobile menu toggle
+      document
+        .querySelector(".mobile-menu-btn")
+        .addEventListener("click", () => {
+          document.querySelector(".nav").classList.toggle("active");
+        });
+
+      // Dropdown menu toggle
+      document.querySelectorAll(".dropdown").forEach((dropdown) => {
+        dropdown.addEventListener("click", function (e) {
+          if (e.target.tagName !== "A") return;
+
+          this.classList.toggle("active");
+          e.stopPropagation();
+        });
+      });
+
+      // Close dropdown when clicking outside
+      document.addEventListener("click", () => {
+        document.querySelectorAll(".dropdown").forEach((dropdown) => {
+          dropdown.classList.remove("active");
+        });
+      });
+    </script>
+  </body>
+</html>

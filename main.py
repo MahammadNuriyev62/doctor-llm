@@ -330,6 +330,12 @@ async def chat_ui(request: Request):
     return templates.TemplateResponse("chat.html", {"request": request})
 
 
+@app.get("/home")
+async def home_page(request: Request):
+    """Serve main chat UI"""
+    return templates.TemplateResponse("home.html", {"request": request})
+
+
 @app.get("/chat/{chat_id}")
 async def chat_by_id(request: Request, chat_id: str):
     """Serve specific chat by ID"""

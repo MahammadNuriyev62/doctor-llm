@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Medical Team - LLM Doctor</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', path='/css/pages.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+  </head>
+  <body>
+    <!-- Header -->
+    <header class="header">
+      <div class="container">
+        <div class="logo">
+          <a href="/">
+            <img
+              src="{{ url_for('static', path='/img/llama-logo.png') }}"
+              alt="LLM Doctor Logo"
+              onerror="this.src='https://via.placeholder.com/40'"
+            />
+            <span>LLM Doctor</span>
+          </a>
+        </div>
+        <nav class="nav">
+          <ul class="nav-links">
+            <li><a href="/">Home</a></li>
+            <li class="dropdown">
+              <a href="#" class="active"
+                >Company <i class="fas fa-chevron-down"></i
+              ></a>
+              <ul class="dropdown-menu">
+                <li><a href="/about">About Us</a></li>
+                <li><a href="/medical-team" class="active">Medical Team</a></li>
+                <li><a href="/partnerships">Partnerships</a></li>
+              </ul>
+            </li>
+            <li><a href="/technology">Our Technology</a></li>
+            <li class="dropdown">
+              <a href="#">Legal <i class="fas fa-chevron-down"></i></a>
+              <ul class="dropdown-menu">
+                <li><a href="/privacy">Privacy</a></li>
+                <li><a href="/terms">Terms</a></li>
+                <li><a href="/medical-disclaimer">Medical Disclaimer</a></li>
+              </ul>
+            </li>
+          </ul>
+        </nav>
+        <div class="auth-buttons">
+          <a href="/login" class="login-btn">Login</a>
+          <a href="/register" class="signup-btn">Sign Up</a>
+        </div>
+        <button class="mobile-menu-btn">
+          <i class="fas fa-bars"></i>
+        </button>
+      </div>
+    </header>
+
+    <!-- Page Header -->
+    <section class="page-header">
+      <div class="container">
+        <h1>Our Medical Team</h1>
+        <p>Meet the experts who guide our AI healthcare system</p>
+      </div>
+    </section>
+
+    <!-- Team Introduction -->
+    <section class="content-section">
+      <div class="container">
+        <div class="team-intro">
+          <h2>The Healthcare Experts Behind LLM Doctor</h2>
+          <p>
+            Our Medical Advisory Board consists of board-certified physicians,
+            healthcare researchers, and medical ethicists who ensure that LLM
+            Doctor provides accurate and ethical medical guidance. This diverse
+            team of experts helps develop, train, and validate our AI system,
+            bringing together decades of combined clinical experience across
+            multiple specialties.
+          </p>
+
+          <div class="stats-grid">
+            <div class="stat-box">
+              <span class="stat-number">25+</span>
+              <span class="stat-label">Medical Experts</span>
+            </div>
+            <div class="stat-box">
+              <span class="stat-number">12</span>
+              <span class="stat-label">Medical Specialties</span>
+            </div>
+            <div class="stat-box">
+              <span class="stat-number">350+</span>
+              <span class="stat-label">Years Combined Experience</span>
+            </div>
+            <div class="stat-box">
+              <span class="stat-number">5,000+</span>
+              <span class="stat-label">Medical Literature Reviews</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Leadership Team -->
+    <section class="team-section">
+      <div class="container">
+        <h2>Executive Medical Leadership</h2>
+
+        <div class="team-grid large">
+          <div class="team-member">
+            <img
+              src="{{ url_for('static', path='/img/team-ceo.jpg') }}"
+              alt="CEO Portrait"
+              onerror="this.src='https://via.placeholder.com/300'"
+            />
+            <h3>Dr. Sarah Chen</h3>
+            <p class="member-title">CEO & Co-founder</p>
+            <p class="member-credentials">MD, MPH, Johns Hopkins University</p>
+            <p class="member-desc">
+              Dr. Chen previously served as Chief of Medicine at University
+              Medical Center and has published over 50 peer-reviewed articles on
+              healthcare innovation and medical AI ethics. Her vision drives LLM
+              Doctor's mission to democratize healthcare access.
+            </p>
+            <div class="member-links">
+              <a href="#" onclick="return false;"
+                ><i class="fab fa-linkedin"></i
+              ></a>
+              <a href="#" onclick="return false;"
+                ><i class="fas fa-globe"></i
+              ></a>
+            </div>
+          </div>
+
+          <div class="team-member">
+            <img
+              src="{{ url_for('static', path='/img/team-cmo.jpg') }}"
+              alt="CMO Portrait"
+              onerror="this.src='https://via.placeholder.com/300'"
+            />
+            <h3>Dr. Elena Rodriguez</h3>
+            <p class="member-title">Chief Medical Officer</p>
+            <p class="member-credentials">MD, PhD, Stanford University</p>
+            <p class="member-desc">
+              Board-certified in internal medicine, Dr. Rodriguez oversees all
+              medical content and protocols at LLM Doctor. Her background in
+              evidence-based medicine ensures our AI provides guidance aligned
+              with current medical best practices.
+            </p>
+            <div class="member-links">
+              <a href="#" onclick="return false;"
+                ><i class="fab fa-linkedin"></i
+              ></a>
+              <a href="#" onclick="return false;"
+                ><i class="fas fa-globe"></i
+              ></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Advisory Board -->
+    <section class="team-section alt-bg">
+      <div class="container">
+        <h2>Medical Advisory Board</h2>
+        <p class="section-subtitle">
+          Specialized experts who guide our AI development and oversight
+        </p>
+
+        <div class="team-grid">
+          <div class="team-member">
+            <img
+              src="{{ url_for('static', path='/img/doctor-1.jpg') }}"
+              alt="Doctor Portrait"
+              onerror="this.src='https://via.placeholder.com/200'"
+            />
+            <h3>Dr. Michael Thompson</h3>
+            <p class="member-title">Cardiology</p>
+            <p class="member-credentials">MD, FACC</p>
+            <p class="member-desc">
+              Director of Cardiovascular Services with 20+ years experience in
+              clinical cardiology and research.
+            </p>
+          </div>
+
+          <div class="team-member">
+            <img
+              src="{{ url_for('static', path='/img/doctor-2.jpg') }}"
+              alt="Doctor Portrait"
+              onerror="this.src='https://via.placeholder.com/200'"
+            />
+            <h3>Dr. Olivia Washington</h3>
+            <p class="member-title">Pediatrics</p>
+            <p class="member-credentials">MD, FAAP</p>
+            <p class="member-desc">
+              Chief of Pediatrics specializing in child development and
+              pediatric education.
+            </p>
+          </div>
+
+          <div class="team-member">
+            <img
+              src="{{ url_for('static', path='/img/doctor-3.jpg') }}"
+              alt="Doctor Portrait"
+              onerror="this.src='https://via.placeholder.com/200'"
+            />
+            <h3>Dr. Robert Kim</h3>
+            <p class="member-title">Neurology</p>
+            <p class="member-credentials">MD, PhD</p>
+            <p class="member-desc">
+              Neurologist and researcher focused on neurological disorders and
+              brain health.
+            </p>
+          </div>
+
+          <div class="team-member">
+            <img
+              src="{{ url_for('static', path='/img/doctor-4.jpg') }}"
+              alt="Doctor Portrait"
+              onerror="this.src='https://via.placeholder.com/200'"
+            />
+            <h3>Dr. Priya Patel</h3>
+            <p class="member-title">Emergency Medicine</p>
+            <p class="member-credentials">MD, MPH</p>
+            <p class="member-desc">
+              Emergency physician with expertise in acute care and medical
+              triage protocols.
+            </p>
+          </div>
+
+          <div class="team-member">
+            <img
+              src="{{ url_for('static', path='/img/doctor-5.jpg') }}"
+              alt="Doctor Portrait"
+              onerror="this.src='https://via.placeholder.com/200'"
+            />
+            <h3>Dr. Thomas Johnson</h3>
+            <p class="member-title">Family Medicine</p>
+            <p class="member-credentials">MD</p>
+            <p class="member-desc">
+              Family physician focused on preventive care and comprehensive
+              health management.
+            </p>
+          </div>
+
+          <div class="team-member">
+            <img
+              src="{{ url_for('static', path='/img/doctor-6.jpg') }}"
+              alt="Doctor Portrait"
+              onerror="this.src='https://via.placeholder.com/200'"
+            />
+            <h3>Dr. Maya Singh</h3>
+            <p class="member-title">Psychiatry</p>
+            <p class="member-credentials">MD</p>
+            <p class="member-desc">
+              Psychiatrist specializing in mental health assessment and
+              treatment approaches.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Specialty Consultants -->
+    <section class="team-section">
+      <div class="container">
+        <h2>Specialty Consultants</h2>
+        <p class="section-subtitle">
+          Experts who provide specialized knowledge in key medical areas
+        </p>
+
+        <div class="specialties-grid">
+          <div class="specialty-item">
+            <div class="specialty-icon">
+              <i class="fas fa-heartbeat"></i>
+            </div>
+            <h3>Cardiology</h3>
+            <p>3 Board-Certified Cardiologists</p>
+          </div>
+
+          <div class="specialty-item">
+            <div class="specialty-icon">
+              <i class="fas fa-lungs"></i>
+            </div>
+            <h3>Pulmonology</h3>
+            <p>2 Pulmonary Specialists</p>
+          </div>
+
+          <div class="specialty-item">
+            <div class="specialty-icon">
+              <i class="fas fa-brain"></i>
+            </div>
+            <h3>Neurology</h3>
+            <p>2 Neurologists</p>
+          </div>
+
+          <div class="specialty-item">
+            <div class="specialty-icon">
+              <i class="fas fa-child"></i>
+            </div>
+            <h3>Pediatrics</h3>
+            <p>3 Pediatricians</p>
+          </div>
+
+          <div class="specialty-item">
+            <div class="specialty-icon">
+              <i class="fas fa-bone"></i>
+            </div>
+            <h3>Orthopedics</h3>
+            <p>2 Orthopedic Surgeons</p>
+          </div>
+
+          <div class="specialty-item">
+            <div class="specialty-icon">
+              <i class="fas fa-venus"></i>
+            </div>
+            <h3>OB/GYN</h3>
+            <p>3 OB/GYN Specialists</p>
+          </div>
+
+          <div class="specialty-item">
+            <div class="specialty-icon">
+              <i class="fas fa-pills"></i>
+            </div>
+            <h3>Pharmacology</h3>
+            <p>2 Clinical Pharmacists</p>
+          </div>
+
+          <div class="specialty-item">
+            <div class="specialty-icon">
+              <i class="fas fa-head-side-virus"></i>
+            </div>
+            <h3>Infectious Disease</h3>
+            <p>2 ID Specialists</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Ethics Review Board -->
+    <section class="team-section alt-bg">
+      <div class="container">
+        <h2>Medical Ethics Review Board</h2>
+        <p class="section-subtitle">
+          Ensuring responsible and ethical AI healthcare guidance
+        </p>
+
+        <div class="content-grid">
+          <div class="content-text">
+            <p>
+              Our Medical Ethics Review Board provides oversight and guidance on
+              the ethical implications of AI in healthcare. This independent
+              body reviews our protocols, training data, and system outputs to
+              ensure LLM Doctor adheres to the highest standards of medical
+              ethics.
+            </p>
+
+            <div class="highlight-box">
+              <h3>Ethical Oversight Functions</h3>
+              <ul>
+                <li>
+                  Regular review of AI model responses and recommendations
+                </li>
+                <li>
+                  Assessment of medical information accuracy and relevance
+                </li>
+                <li>Monitoring for potential biases in healthcare guidance</li>
+                <li>
+                  Development of ethical guidelines for AI healthcare
+                  information
+                </li>
+                <li>
+                  Oversight of privacy practices and data security protocols
+                </li>
+              </ul>
+            </div>
+
+            <p>
+              The board consists of medical ethicists, healthcare policy
+              experts, patient advocates, and clinical practitioners who meet
+              quarterly to review LLM Doctor's operations and provide
+              recommendations for improvement.
+            </p>
+          </div>
+          <div class="content-image">
+            <img
+              src="{{ url_for('static', path='/img/ethics-board.jpg') }}"
+              alt="Ethics board meeting"
+              onerror="this.src='https://via.placeholder.com/500x300'"
+            />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Join Our Team CTA -->
+    <section class="cta-section">
+      <div class="container">
+        <h2>Join Our Medical Consultant Network</h2>
+        <p>
+          We're always seeking qualified healthcare professionals to contribute
+          to LLM Doctor's development and oversight
+        </p>
+        <a href="#" onclick="return false;" class="cta-btn"
+          >Contact Us About Opportunities</a
+        >
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="container">
+        <div class="footer-content">
+          <div class="footer-logo">
+            <img
+              src="{{ url_for('static', path='/img/llama-logo.png') }}"
+              alt="LLM Doctor Logo"
+              onerror="this.src='https://via.placeholder.com/30'"
+            />
+            <h3>LLM Doctor</h3>
+          </div>
+
+          <div class="footer-links">
+            <div class="link-group">
+              <h4>Service</h4>
+              <a href="/">Home</a>
+              <a href="/chat">Start Consultation</a>
+              <a href="/technology">Our Technology</a>
+            </div>
+
+            <div class="link-group">
+              <h4>Company</h4>
+              <a href="/about">About Us</a>
+              <a href="/medical-team">Medical Team</a>
+              <a href="/partnerships">Partnerships</a>
+            </div>
+
+            <div class="link-group">
+              <h4>Legal</h4>
+              <a href="/privacy">Privacy</a>
+              <a href="/terms">Terms</a>
+              <a href="/medical-disclaimer">Medical Disclaimer</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="copyright">
+          <p>
+            &copy; 2025 LLM Doctor. All rights reserved. Not a substitute for
+            professional medical advice.
+          </p>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      // Mobile menu toggle
+      document
+        .querySelector(".mobile-menu-btn")
+        .addEventListener("click", () => {
+          document.querySelector(".nav").classList.toggle("active");
+        });
+
+      // Dropdown menu toggle
+      document.querySelectorAll(".dropdown").forEach((dropdown) => {
+        dropdown.addEventListener("click", function (e) {
+          if (e.target.tagName !== "A") return;
+
+          this.classList.toggle("active");
+          e.stopPropagation();
+        });
+      });
+
+      // Close dropdown when clicking outside
+      document.addEventListener("click", () => {
+        document.querySelectorAll(".dropdown").forEach((dropdown) => {
+          dropdown.classList.remove("active");
+        });
+      });
+    </script>
+  </body>
+</html>

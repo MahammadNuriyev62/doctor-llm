@@ -1,7 +1,11 @@
 // Global variables
 let conversation = [
   // Initial system message
-  { role: "system", content: "You are a helpful assistant." },
+  {
+    role: "system",
+    content:
+      "You are LLM Doctor, an AI medical assistant. Provide helpful medical information and guidance, but always clarify that you're not a replacement for professional medical care. For any serious or emergency symptoms, advise users to seek immediate medical attention.",
+  },
 ];
 let currentChatId = null;
 let isNewChat = true;
@@ -410,24 +414,63 @@ function addMessageToUI(role, content) {
       // Fallback to icon if image can't load
       this.remove();
       const icon = document.createElement("i");
-      icon.classList.add("fa-solid", "fa-robot");
+      icon.classList.add("fa-solid", "fa-user-doctor");
       avatar.appendChild(icon);
     };
     avatar.appendChild(img);
   } else if (role === "system") {
     // System message avatar
     const icon = document.createElement("i");
-    icon.classList.add("fa-solid", "fa-circle-info");
+    icon.classList.add("fa-solid", "fa-shield-alt");
     avatar.appendChild(icon);
+  }
+
+  // Check for urgent medical content
+  let isUrgent = false;
+  if (
+    role === "assistant" &&
+    (content.toLowerCase().includes("emergency") ||
+      content.toLowerCase().includes("urgent") ||
+      content.toLowerCase().includes("call 911") ||
+      content.toLowerCase().includes("immediate medical attention"))
+  ) {
+    isUrgent = true;
+    messageWrapper.classList.add("urgent");
   }
 
   // Message text container
   const messageText = document.createElement("div");
   messageText.classList.add("message-text");
 
+  // Create message bubble
   const messageBubble = document.createElement("div");
   messageBubble.classList.add("message-bubble");
+
+  // Add urgent warning if needed
+  if (isUrgent) {
+    const urgentLabel = document.createElement("div");
+    urgentLabel.classList.add("urgent-label");
+    urgentLabel.innerHTML =
+      '<i class="fas fa-exclamation-triangle"></i> Urgent Medical Information';
+    messageText.appendChild(urgentLabel);
+  }
+
   messageBubble.textContent = content;
+
+  // Add disclaimer for certain medical advice
+  if (
+    role === "assistant" &&
+    (content.toLowerCase().includes("treatment") ||
+      content.toLowerCase().includes("diagnosis") ||
+      content.toLowerCase().includes("medication") ||
+      content.toLowerCase().includes("therapy"))
+  ) {
+    const disclaimer = document.createElement("div");
+    disclaimer.classList.add("message-disclaimer");
+    disclaimer.innerHTML =
+      '<i class="fas fa-info-circle"></i> This information is for educational purposes only and does not constitute medical advice.';
+    messageText.appendChild(disclaimer);
+  }
 
   messageText.appendChild(messageBubble);
   messageContent.appendChild(avatar);
@@ -468,7 +511,7 @@ function addTypingIndicator(id) {
     // Fallback to icon if image can't load
     this.remove();
     const icon = document.createElement("i");
-    icon.classList.add("fa-solid", "fa-robot");
+    icon.classList.add("fa-solid", "fa-user-doctor");
     avatar.appendChild(icon);
   };
   avatar.appendChild(img);
@@ -479,6 +522,7 @@ function addTypingIndicator(id) {
 
   const indicator = document.createElement("div");
   indicator.classList.add("typing-indicator");
+  indicator.innerHTML = "<span>LLM Doctor is analyzing</span>";
 
   messageText.appendChild(indicator);
   content.appendChild(avatar);
@@ -505,7 +549,13 @@ function scrollToBottom() {
 // Start a new chat
 function startNewChat() {
   // Reset conversation
-  conversation = [{ role: "system", content: "You are a helpful assistant." }];
+  conversation = [
+    {
+      role: "system",
+      content:
+        "You are LLM Doctor, an AI medical assistant. Provide helpful medical information and guidance, but always clarify that you're not a replacement for professional medical care. For any serious or emergency symptoms, advise users to seek immediate medical attention.",
+    },
+  ];
 
   // Reset variables
   currentChatId = null;
@@ -515,13 +565,17 @@ function startNewChat() {
   window.history.pushState({}, "", "/chat");
 
   // Update chat title
-  chatTitle.textContent = "New Chat";
+  chatTitle.textContent = "New Medical Consultation";
 
   // Clear UI
   messagesContainer.innerHTML = `
       <div class="welcome-screen">
-          <img src="/static/img/llama-logo.png" alt="Llama Logo" class="welcome-logo" onerror="this.src='https://via.placeholder.com/100'">
-          <h2>How can I help you today?</h2>
+          <img src="/static/img/llama-logo.png" alt="LLM Doctor Logo" class="welcome-logo" onerror="this.src='https://via.placeholder.com/100'">
+          <h2>How can I help you with your health today?</h2>
+          <p class="disclaimer-text">
+              <i class="fas fa-info-circle"></i> 
+              Remember: LLM Doctor provides information for educational purposes only and is not a substitute for professional medical advice.
+          </p>
       </div>
   `;
 

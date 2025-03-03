@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Llama Chat</title>
+    <title>LLM Doctor - Your AI Medical Assistant</title>
     <link
       rel="stylesheet"
       href="{{ url_for('static', path='/css/styles.css') }}"
@@ -20,19 +20,19 @@
         <div class="sidebar-header">
           <img
             src="{{ url_for('static', path='/img/llama-logo.png') }}"
-            alt="Llama Logo"
+            alt="LLM Doctor Logo"
             class="logo"
             onerror="this.src='https://via.placeholder.com/30'"
           />
-          <h1>Llama Chat</h1>
+          <h1>LLM Doctor</h1>
         </div>
         <button id="new-chat-btn" class="new-chat-btn">
-          <i class="fa-solid fa-plus"></i> New chat
+          <i class="fa-solid fa-plus"></i> New consultation
         </button>
 
         <!-- Chat history list -->
         <div class="history-container">
-          <h3>Chat History</h3>
+          <h3>Medical History</h3>
           <div id="chat-history-list" class="history-list">
             <!-- Chat history items will be added here dynamically -->
             <div class="history-loading">Loading history...</div>
@@ -42,13 +42,13 @@
         <div class="sidebar-footer">
           <div class="user-info">
             <i class="fa-solid fa-user"></i>
-            <span id="username-display">User</span>
+            <span id="username-display">Patient</span>
           </div>
           <button id="logout-btn" class="logout-btn">
             <i class="fa-solid fa-sign-out-alt"></i> Logout
           </button>
           <div class="model-info">
-            <span>Model: Llama 3.2 1B</span>
+            <span>Powered by: LLM Doctor AI</span>
           </div>
         </div>
       </div>
@@ -59,7 +59,7 @@
           <button id="mobile-menu-btn" class="mobile-menu-btn">
             <i class="fa-solid fa-bars"></i>
           </button>
-          <h2 id="chat-title">Llama 3.2 Chat</h2>
+          <h2 id="chat-title">Medical Consultation</h2>
         </div>
 
         <!-- Messages area -->
@@ -67,11 +67,16 @@
           <div class="welcome-screen">
             <img
               src="{{ url_for('static', path='/img/llama-logo.png') }}"
-              alt="Llama Logo"
+              alt="LLM Doctor Logo"
               class="welcome-logo"
               onerror="this.src='https://via.placeholder.com/100'"
             />
-            <h2>How can I help you today?</h2>
+            <h2>How can I help you with your health today?</h2>
+            <p class="disclaimer-text">
+              <i class="fas fa-info-circle"></i>
+              Remember: LLM Doctor provides information for educational purposes
+              only and is not a substitute for professional medical advice.
+            </p>
           </div>
         </div>
 
@@ -81,7 +86,7 @@
             <div class="input-container">
               <textarea
                 id="user-input"
-                placeholder="Message Llama..."
+                placeholder="Describe your symptoms or health concerns..."
                 rows="1"
               ></textarea>
               <button type="submit" id="send-btn" class="send-btn">
@@ -89,8 +94,7 @@
               </button>
             </div>
             <div class="disclaimer">
-              Llama 3.2 can make mistakes. Consider checking important
-              information.
+              Always consult a healthcare professional for medical concerns.
             </div>
           </form>
         </div>

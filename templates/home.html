@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>LLM Doctor - AI Medical Assistant at Your Fingertips</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', path='/css/home.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+  </head>
+  <body>
+    <!-- Particle background -->
+    <div id="particles-js"></div>
+
+    <!-- Hero Section -->
+    <header class="hero">
+      <div class="navbar">
+        <div class="logo">
+          <img
+            src="{{ url_for('static', path='/img/llama-logo.png') }}"
+            alt="LLM Doctor Logo"
+            onerror="this.src='https://via.placeholder.com/40'"
+          />
+          <h2>LLM Doctor</h2>
+        </div>
+        <div class="nav-links">
+          <a href="/login" class="nav-btn login-btn">Login</a>
+          <a href="/register" class="nav-btn signup-btn">Sign Up</a>
+        </div>
+      </div>
+
+      <div class="hero-content">
+        <h1 class="headline">
+          <span class="gradient-text">Your AI Doctor.</span>
+          <span class="subtitle">Available 24/7.</span>
+        </h1>
+        <p class="tagline">
+          Get instant medical insights, symptom analysis, and health guidance
+          powered by advanced AI - no waiting rooms, no appointments.
+        </p>
+
+        <div class="cta-buttons">
+          <a href="/register" class="cta-btn primary-btn"
+            >Get Medical Help Now <i class="fas fa-heartbeat"></i
+          ></a>
+          <a href="#features" class="cta-btn secondary-btn"
+            >See How It Works <i class="fas fa-chevron-down"></i
+          ></a>
+        </div>
+      </div>
+
+      <div class="hero-image">
+        <div class="chat-preview">
+          <div class="chat-header">
+            <div class="chat-avatar">
+              <img
+                src="{{ url_for('static', path='/img/llama-logo.png') }}"
+                alt="Doctor Avatar"
+                onerror="this.src='https://via.placeholder.com/30'"
+              />
+            </div>
+            <div class="chat-info">
+              <h3>LLM Doctor</h3>
+              <span class="status">Online</span>
+            </div>
+          </div>
+          <div class="chat-messages">
+            <div class="message user-message">
+              <p>
+                I've had a headache and mild fever for 2 days. Should I be
+                concerned?
+              </p>
+            </div>
+            <div class="message bot-message typing">
+              <div class="typing-indicator">
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Features Section -->
+    <section id="features" class="features">
+      <h2 class="section-title">Why Trust LLM Doctor?</h2>
+
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">
+            <i class="fas fa-robot"></i>
+          </div>
+          <h3>AI-Powered Diagnosis</h3>
+          <p>
+            Get preliminary insights about your symptoms from our advanced
+            medical AI system.
+          </p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">
+            <i class="fas fa-clock"></i>
+          </div>
+          <h3>24/7 Availability</h3>
+          <p>
+            Access medical guidance anytime, anywhere - no appointments, no
+            waiting.
+          </p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">
+            <i class="fas fa-lock"></i>
+          </div>
+          <h3>Private & Secure</h3>
+          <p>
+            Your health information stays private with enterprise-grade
+            security.
+          </p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">
+            <i class="fas fa-book-medical"></i>
+          </div>
+          <h3>Medical Knowledge</h3>
+          <p>
+            Powered by vast medical literature, research, and clinical
+            guidelines.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section class="how-it-works">
+      <h2 class="section-title">How LLM Doctor Works</h2>
+
+      <div class="steps">
+        <div class="step">
+          <div class="step-number">1</div>
+          <h3>Describe Your Symptoms</h3>
+          <p>
+            Simply explain what you're feeling in normal, everyday language.
+          </p>
+        </div>
+
+        <div class="step">
+          <div class="step-number">2</div>
+          <h3>Get AI Analysis</h3>
+          <p>
+            Receive instant insights about possible conditions and next steps.
+          </p>
+        </div>
+
+        <div class="step">
+          <div class="step-number">3</div>
+          <h3>Take Informed Action</h3>
+          <p>
+            Know whether to self-care, schedule a doctor visit, or seek
+            emergency help.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="testimonials">
+      <h2 class="section-title">User Experiences</h2>
+
+      <div class="testimonial-carousel">
+        <div class="testimonial">
+          <div class="quote">
+            "LLM Doctor helped me understand my symptoms at 2 AM when I was
+            worried sick. It recommended I go to the ER, which turned out to be
+            the right call for my appendicitis."
+          </div>
+          <div class="user">
+            <span class="name">Emily R.</span>
+            <span class="title">Mother of two</span>
+          </div>
+        </div>
+
+        <div class="testimonial">
+          <div class="quote">
+            "As someone living in a rural area, getting quick medical advice is
+            challenging. LLM Doctor has become my first stop for health
+            concerns, saving me hours of travel for minor issues."
+          </div>
+          <div class="user">
+            <span class="name">James T.</span>
+            <span class="title">Construction Worker</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Medical Disclaimer -->
+    <section class="disclaimer-section">
+      <div class="disclaimer-content">
+        <i class="fas fa-info-circle"></i>
+        <p>
+          LLM Doctor provides information for educational purposes only. It's
+          not a replacement for professional medical advice, diagnosis, or
+          treatment. Always seek the advice of your physician for any medical
+          concerns.
+        </p>
+      </div>
+    </section>
+
+    <!-- Final CTA -->
+    <section class="final-cta">
+      <div class="cta-content">
+        <h2>Your Personal AI Medical Assistant Awaits</h2>
+        <p>
+          Join thousands of users getting instant medical guidance without the
+          wait.
+        </p>
+        <a href="/register" class="cta-btn primary-btn large-btn"
+          >Start Free Consultation <i class="fas fa-stethoscope"></i
+        ></a>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="footer-content">
+        <div class="footer-logo">
+          <img
+            src="{{ url_for('static', path='/img/llama-logo.png') }}"
+            alt="LLM Doctor Logo"
+            onerror="this.src='https://via.placeholder.com/30'"
+          />
+          <h3>LLM Doctor</h3>
+        </div>
+
+        <div class="footer-links">
+          <div class="link-group">
+            <h4>Service</h4>
+            <a href="#features">Features</a>
+            <a href="#" onclick="return false;">Health Topics</a>
+            <a href="#" onclick="return false;">FAQ</a>
+          </div>
+
+          <div class="link-group">
+            <h4>Company</h4>
+            <a href="#" onclick="return false;">About Us</a>
+            <a href="#" onclick="return false;">Medical Team</a>
+            <a href="#" onclick="return false;">Partnerships</a>
+          </div>
+
+          <div class="link-group">
+            <h4>Legal</h4>
+            <a href="#" onclick="return false;">Privacy</a>
+            <a href="#" onclick="return false;">Terms</a>
+            <a href="#" onclick="return false;">Medical Disclaimer</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="copyright">
+        <p>
+          &copy; 2025 LLM Doctor. All rights reserved. Not a substitute for
+          professional medical advice.
+        </p>
+      </div>
+    </footer>
+
+    <!-- Animation for chat typing effect -->
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        // Add animation class to make the bot appear to be typing
+        setTimeout(() => {
+          const botMessage = document.querySelector(".bot-message");
+          botMessage.classList.remove("typing");
+          botMessage.innerHTML =
+            "<p>Based on your symptoms, this could be a common viral infection. Rest, stay hydrated, and take acetaminophen if needed. If your fever rises above 102°F or persists beyond 3 days, you should consult with a healthcare provider.</p>";
+        }, 3000);
+
+        // Animate on scroll
+        const animateOnScroll = () => {
+          const elements = document.querySelectorAll(
+            ".feature-card, .step, .testimonial"
+          );
+          elements.forEach((element) => {
+            const elementPosition = element.getBoundingClientRect().top;
+            const screenPosition = window.innerHeight / 1.3;
+
+            if (elementPosition < screenPosition) {
+              element.classList.add("appear");
+            }
+          });
+        };
+
+        window.addEventListener("scroll", animateOnScroll);
+        animateOnScroll(); // Initial check
+      });
+    </script>
+
+    <!-- Particles.js for background effect -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/particles.js/2.0.0/particles.min.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        if (typeof particlesJS !== "undefined") {
+          particlesJS("particles-js", {
+            particles: {
+              number: {
+                value: 80,
+                density: {
+                  enable: true,
+                  value_area: 800,
+                },
+              },
+              color: {
+                value: "#10a37f",
+              },
+              shape: {
+                type: "circle",
+                stroke: {
+                  width: 0,
+                  color: "#000000",
+                },
+              },
+              opacity: {
+                value: 0.5,
+                random: false,
+                anim: {
+                  enable: false,
+                  speed: 1,
+                  opacity_min: 0.1,
+                  sync: false,
+                },
+              },
+              size: {
+                value: 3,
+                random: true,
+                anim: {
+                  enable: false,
+                  speed: 40,
+                  size_min: 0.1,
+                  sync: false,
+                },
+              },
+              line_linked: {
+                enable: true,
+                distance: 150,
+                color: "#10a37f",
+                opacity: 0.2,
+                width: 1,
+              },
+              move: {
+                enable: true,
+                speed: 2,
+                direction: "none",
+                random: false,
+                straight: false,
+                out_mode: "out",
+                bounce: false,
+                attract: {
+                  enable: false,
+                  rotateX: 600,
+                  rotateY: 1200,
+                },
+              },
+            },
+            interactivity: {
+              detect_on: "canvas",
+              events: {
+                onhover: {
+                  enable: true,
+                  mode: "grab",
+                },
+                onclick: {
+                  enable: true,
+                  mode: "push",
+                },
+                resize: true,
+              },
+              modes: {
+                grab: {
+                  distance: 140,
+                  line_linked: {
+                    opacity: 1,
+                  },
+                },
+                bubble: {
+                  distance: 400,
+                  size: 40,
+                  duration: 2,
+                  opacity: 8,
+                  speed: 3,
+                },
+                repulse: {
+                  distance: 200,
+                  duration: 0.4,
+                },
+                push: {
+                  particles_nb: 4,
+                },
+                remove: {
+                  particles_nb: 2,
+                },
+              },
+            },
+            retina_detect: true,
+          });
+        }
+      });
+    </script>
+  </body>
+</html>
