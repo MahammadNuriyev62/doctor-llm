@@ -55,9 +55,6 @@ SECRET_KEY = settings.secret_key  # Change this in production
 ALGORITHM = settings.algorithm
 security = HTTPBearer()
 
-# Replace this with your actual Hugging Face token
-token = "hello"
-
 # Model & tokenizer
 model_name = settings.model
 tokenizer = AutoTokenizer.from_pretrained(
