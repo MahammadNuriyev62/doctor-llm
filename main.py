@@ -20,7 +20,7 @@ class Settings(BaseSettings):
     mongo_uri: str
     secret_key: str
     algorithm: str
-    hugging_face_token: str
+    model: str
 
     # load from .env
     class Config:
@@ -59,13 +59,14 @@ security = HTTPBearer()
 token = "hello"
 
 # Model & tokenizer
-model_name = "meta-llama/Llama-3.2-1B-Instruct"
-tokenizer = AutoTokenizer.from_pretrained(model_name, token=settings.hugging_face_token)
+model_name = settings.model
+tokenizer = AutoTokenizer.from_pretrained(
+    model_name,
+)
 model = AutoModelForCausalLM.from_pretrained(
     model_name,
     device_map="auto",
     torch_dtype=torch.bfloat16,
-    token=settings.hugging_face_token,
 )
 
 
@@ -145,7 +146,12 @@ def chat_stream(prompt: str):
     """
     inputs = tokenizer(prompt, return_tensors="pt").to(model.device)
     streamer = TextIteratorStreamer(tokenizer, skip_prompt=True)
-    generation_kwargs = dict(**inputs, streamer=streamer, max_new_tokens=500)
+    generation_kwargs = dict(
+        **inputs,
+        streamer=streamer,
+        max_new_tokens=1024,
+        eos_token_id=tokenizer.eos_token_id,
+    )
 
     thread = threading.Thread(target=model.generate, kwargs=generation_kwargs)
     thread.start()
@@ -203,9 +209,28 @@ async def chat_endpoint(messages: List[Message], user=Depends(get_current_user))
     # Convert our Message objects to the format expected by the tokenizer
     chat_messages = [{"role": msg.role, "content": msg.content} for msg in messages]
 
+    # system_prompt = (
+    #     "You are a medical assistant trained to provide general health information. "
+    #     "Follow these rules:\n"
+    #     "1. Only answer the question asked.\n"
+    #     "2. Do not provide any additional stories, anecdotes, or personal information.\n"
+    #     "3. Do not deviate from medical facts.\n"
+    #     "5. Do not include references/sources (papers, websites, etc.)\n"
+    #     "6. Be concise and accurate.\n\n\n"
+    #     "VERY IMPORTANT: stick to what user asks, don't go beyond that!!!"
+    #     ""
+    # )
+    system_prompt = (
+        "You are a medical assistant trained to provide general health information. "
+        "If user says something unrelated to medical, just say 'I am a medical assistant, I can only answer medical questions.' "
+    )
+
     # Use the model's built-in chat template
     prompt = tokenizer.apply_chat_template(
-        chat_messages, tokenize=False, add_generation_prompt=True
+        [{"role": "system", "content": system_prompt}, *chat_messages],
+        # chat_messages,
+        tokenize=False,
+        add_generation_prompt=True,
     )
 
     return StreamingResponse(chat_stream(prompt), media_type="text/plain")
@@ -222,7 +247,7 @@ async def create_chat(chat_data: ChatCreate, user=Depends(get_current_user)):
     chat = {
         "id": chat_id,  # Use 'id' instead of 'chat_id' to match existing index
         "title": chat_data.title,
-        "messages": [{"role": "system", "content": "You are a helpful assistant."}],
+        "messages": [],
         "user_id": user["user_id"],
         "created_at": datetime.utcnow(),
         "updated_at": datetime.utcnow(),

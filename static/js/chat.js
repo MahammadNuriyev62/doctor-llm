@@ -1,12 +1,5 @@
 // Global variables
-let conversation = [
-  // Initial system message
-  {
-    role: "system",
-    content:
-      "You are LLM Doctor, an AI medical assistant. Provide helpful medical information and guidance, but always clarify that you're not a replacement for professional medical care. For any serious or emergency symptoms, advise users to seek immediate medical attention.",
-  },
-];
+let conversation = [];
 let currentChatId = null;
 let isNewChat = true;
 
@@ -189,9 +182,7 @@ async function loadChat(chatId) {
     // Update global variables
     currentChatId = chatId;
     isNewChat = false;
-    conversation = chat.messages || [
-      { role: "system", content: "You are a helpful assistant." },
-    ];
+    conversation = chat.messages || [];
 
     // Update chat title
     chatTitle.textContent = chat.title;
@@ -549,13 +540,7 @@ function scrollToBottom() {
 // Start a new chat
 function startNewChat() {
   // Reset conversation
-  conversation = [
-    {
-      role: "system",
-      content:
-        "You are LLM Doctor, an AI medical assistant. Provide helpful medical information and guidance, but always clarify that you're not a replacement for professional medical care. For any serious or emergency symptoms, advise users to seek immediate medical attention.",
-    },
-  ];
+  conversation = [];
 
   // Reset variables
   currentChatId = null;
