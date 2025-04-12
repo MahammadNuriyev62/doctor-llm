@@ -1,32 +1,22 @@
-# Use an official Python runtime as the base image
+# Use an official Python runtime as a parent image
 FROM python:3.9-slim
 
-# Install MongoDB (from Debian repositories) and any other required packages
-RUN apt-get update && \
-    apt-get install -y mongodb && \
-    rm -rf /var/lib/apt/lists/*
-
-# Create the MongoDB data directory
-RUN mkdir -p /data/db
-
-# Set the working directory
+# Set the working directory in the container
 WORKDIR /app
 
-# Copy the requirements file and install Python dependencies
+# Copy the requirements file and install dependencies
 COPY requirements.txt .
 RUN pip install --upgrade pip && pip install -r requirements.txt
 
-# Copy the rest of the application code
+# Copy the entire project into the container
 COPY . .
 
-# Ensure the entrypoint script is executable
+# Copy and set permissions for the entrypoint script
 RUN chmod +x /app/entrypoint.sh
 
-# Expose the FastAPI port
+# Expose port 8000 for the app
 EXPOSE 8000
 
-# Set the entrypoint to our custom script
+# Set the entrypoint to generate .env and then run Uvicorn
 ENTRYPOINT ["/app/entrypoint.sh"]
-
-# The container’s default command: start FastAPI with Uvicorn
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]

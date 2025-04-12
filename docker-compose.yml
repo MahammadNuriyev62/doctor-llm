@@ -1,0 +1,26 @@
+services:
+  app:
+    tty: true # Allocate a TTY for the container
+    stdin_open: true # Keep STDIN open
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      # Use the following defaults; users can override these values either in an external .env or with docker-compose overrides.
+      - SECRET_KEY=${SECRET_KEY:-THANK_YOU_FOR_USING_THIS_IMAGE}
+      - ALGORITHM=${ALGORITHM:-HS256}
+      - MODEL=${MODEL:-nuriyev/Qwen2.5-0.5B-Instruct-medical-dpo}
+      # If not provided, point to the mongo container in the same docker-compose network.
+      - MONGO_URI=${MONGO_URI:-mongodb://mongo:27017}
+    depends_on:
+      - mongo
+
+  mongo:
+    image: mongo:latest
+    restart: always
+    ports:
+      - "27017:27017"
+    environment:
+      # Optional: Set up root credentials if needed.
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=example

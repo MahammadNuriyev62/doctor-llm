@@ -1,9 +1,8 @@
 #!/bin/bash
-set -e
 
 echo "Generating .env file from environment variables..."
 
-# Generate .env file using env vars, defaulting if not provided
+# Create a .env file using provided env vars, falling back to defaults if not present.
 cat <<EOF > .env
 SECRET_KEY=${SECRET_KEY:-THANK_YOU_FOR_USING_THIS_IMAGE}
 ALGORITHM=${ALGORITHM:-HS256}
@@ -14,13 +13,5 @@ EOF
 echo ".env file created:"
 cat .env
 
-echo "Starting MongoDB..."
-# Start the MongoDB server in the background
-mongod --dbpath /data/db --bind_ip_all &
-
-# Optional: Wait a few seconds for MongoDB to initialize
-sleep 5
-
-echo "Starting FastAPI App..."
-# Execute the command passed as CMD, which starts Uvicorn
+# Execute the CMD passed from Dockerfile
 exec "$@"
