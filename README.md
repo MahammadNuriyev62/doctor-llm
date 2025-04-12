@@ -28,7 +28,13 @@ docker rmi zver12345/doctor-llm
 
 ### Don't have any mongoDB instance running?
 
-Then, you should clone the repository and up the docker-compose file:
+Then, you should clone the repository
+
+```bash
+git clone https://github.com/MahammadNuriyev62/doctor-llm.git
+```
+
+And up the docker-compose file, that will additionally run a MongoDB instance for you:
 
 ```bash
 SECRET_KEY=MySecretKey \
