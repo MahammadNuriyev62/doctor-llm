@@ -10,6 +10,7 @@ services:
       - SECRET_KEY=${SECRET_KEY:-THANK_YOU_FOR_USING_THIS_IMAGE}
       - ALGORITHM=${ALGORITHM:-HS256}
       - MODEL=${MODEL:-nuriyev/Qwen2.5-0.5B-Instruct-medical-dpo}
+      - DUAL_RESPONSE_PROBABILITY=${DUAL_RESPONSE_PROBABILITY:-0.1}
       # mongodb uri available in the container from mongo service
       - MONGO_URI=mongodb://mongo:27017
     depends_on:

@@ -23,6 +23,7 @@ class Settings(BaseSettings):
     secret_key: str
     algorithm: str
     model: str
+    dual_response_probability: float = 0.1  # Default value if not in .env
 
     # load from .env
     class Config:
@@ -414,23 +415,35 @@ async def register_page(request: Request):
     return templates.TemplateResponse("register.html", {"request": request})
 
 
-@app.get("/chat")
-async def chat_ui(request: Request):
-    """Serve main chat UI"""
-    return templates.TemplateResponse("chat.html", {"request": request})
-
-
 @app.get("/home")
 async def home_page(request: Request):
     """Serve main chat UI"""
     return templates.TemplateResponse("home.html", {"request": request})
 
 
+@app.get("/chat")
+async def chat_ui(request: Request):
+    """Serve main chat UI"""
+    return templates.TemplateResponse(
+        "chat.html",
+        {
+            "request": request,
+            "dual_response_probability": settings.dual_response_probability,
+        },
+    )
+
+
+# Also update the chat_by_id endpoint
 @app.get("/chat/{chat_id}")
 async def chat_by_id(request: Request, chat_id: str):
     """Serve specific chat by ID"""
     return templates.TemplateResponse(
-        "chat.html", {"request": request, "chat_id": chat_id}
+        "chat.html",
+        {
+            "request": request,
+            "chat_id": chat_id,
+            "dual_response_probability": settings.dual_response_probability,
+        },
     )
 
 

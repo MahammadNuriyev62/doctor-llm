@@ -3,8 +3,7 @@ let conversation = [];
 let currentChatId = null;
 let isNewChat = true;
 let unsavedMessages = []; // Track messages that haven't been saved to DB yet
-let enableDualResponses = true; // Flag to enable/disable dual response feature
-const dualResponseProbability = 0.2; // 30% chance of triggering dual responses
+// dualResponseProbability and enableDualResponses is now injected from the server
 
 // DOM elements
 const messagesContainer = document.getElementById("messages-container");
