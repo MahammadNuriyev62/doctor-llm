@@ -1,6 +1,6 @@
 This is a vibe coded interface for TER project at Paris-Saclay.
 
-Currently deployed at `http://161.35.199.233:8000/`, it is likely that by the time you read this, the server is down. If you want to run it locally, you can do so by running the following command:
+Currently deployed at [http://161.35.199.233:8000/](http://161.35.199.233:8000/), it is likely that by the time you read this, the server is down. If you want to run it locally, you can do so by running the following command:
 
 ```bash
 docker run -it --rm \
