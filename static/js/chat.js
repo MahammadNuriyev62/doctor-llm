@@ -328,7 +328,7 @@ function addDualResponsesContainer(id) {
   container.innerHTML = `
     <div class="dual-responses-header">
       <i class="fa-solid fa-robot"></i>
-      <span>Comparing two possible responses...</span>
+      <span>Which response do you like most?...</span>
     </div>
     <div class="dual-responses-content">
       <div class="response-column" id="response1-${id}">
