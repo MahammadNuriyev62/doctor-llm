@@ -4,7 +4,7 @@ from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from pydantic import BaseModel
-from typing import List
+from typing import List, Optional
 from enum import Enum
 from transformers import AutoModelForCausalLM, AutoTokenizer, TextIteratorStreamer
 import torch
@@ -14,6 +14,8 @@ import uuid
 from pymongo import MongoClient
 from jose import JWTError, jwt
 from pydantic_settings import BaseSettings
+import hmac
+import hashlib
 
 
 class Settings(BaseSettings):
@@ -78,6 +80,11 @@ class Message(BaseModel):
     content: str
 
 
+class MessageWithSignature(Message):
+    signature: Optional[str] = None
+    message_id: Optional[str] = None
+
+
 class ChatHistory(BaseModel):
     chat_id: str
     title: str
@@ -106,6 +113,17 @@ def create_jwt_token(data: dict):
     to_encode = data.copy()
     token = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return token
+
+
+# Generate message signature
+def generate_message_signature(content: str) -> str:
+    return hmac.new(SECRET_KEY.encode(), content.encode(), hashlib.sha256).hexdigest()
+
+
+# Verify message signature
+def verify_message_signature(content: str, signature: str) -> bool:
+    expected_signature = generate_message_signature(content)
+    return hmac.compare_digest(expected_signature, signature)
 
 
 # Verify JWT token
@@ -152,8 +170,20 @@ def chat_stream(prompt: str):
 
     thread = threading.Thread(target=model.generate, kwargs=generation_kwargs)
     thread.start()
+
+    # Track the full response to generate signature at the end
+    full_response = ""
+
     for token in streamer:
+        full_response += token
         yield token
+
+    # After all tokens are generated, yield the signature as a special message
+    message_id = str(uuid.uuid4())
+    signature = generate_message_signature(full_response)
+    signature_data = f"\n__MESSAGE_ID__:{message_id}\n__SIGNATURE__:{signature}"
+
+    yield signature_data
 
 
 @app.post("/api/register", response_model=TokenResponse)
@@ -206,17 +236,6 @@ async def chat_endpoint(messages: List[Message], user=Depends(get_current_user))
     # Convert our Message objects to the format expected by the tokenizer
     chat_messages = [{"role": msg.role, "content": msg.content} for msg in messages]
 
-    # system_prompt = (
-    #     "You are a medical assistant trained to provide general health information. "
-    #     "Follow these rules:\n"
-    #     "1. Only answer the question asked.\n"
-    #     "2. Do not provide any additional stories, anecdotes, or personal information.\n"
-    #     "3. Do not deviate from medical facts.\n"
-    #     "5. Do not include references/sources (papers, websites, etc.)\n"
-    #     "6. Be concise and accurate.\n\n\n"
-    #     "VERY IMPORTANT: stick to what user asks, don't go beyond that!!!"
-    #     ""
-    # )
     system_prompt = (
         "You are a medical assistant trained to provide general health information. "
         "If user says something unrelated to medical, just say 'I am a medical assistant, I can only answer medical questions.' "
@@ -225,7 +244,6 @@ async def chat_endpoint(messages: List[Message], user=Depends(get_current_user))
     # Use the model's built-in chat template
     prompt = tokenizer.apply_chat_template(
         [{"role": "system", "content": system_prompt}, *chat_messages],
-        # chat_messages,
         tokenize=False,
         add_generation_prompt=True,
     )
@@ -309,15 +327,15 @@ async def get_chat(chat_id: str, user=Depends(get_current_user)):
     return chat
 
 
-class ChatUpdate(BaseModel):
-    messages: List[dict]
+class MessageAdd(BaseModel):
+    message: MessageWithSignature
 
 
-@app.put("/api/chats/{chat_id}")
-async def update_chat(
-    chat_id: str, chat_data: ChatUpdate, user=Depends(get_current_user)
+@app.post("/api/chats/{chat_id}/messages")
+async def add_message(
+    chat_id: str, message_data: MessageAdd, user=Depends(get_current_user)
 ):
-    """Update chat messages"""
+    """Add a single new message to the chat"""
     # Verify the chat belongs to the user
     chat = db.chats.find_one(
         {
@@ -327,19 +345,54 @@ async def update_chat(
             ]
         }
     )
+
     if not chat:
         raise HTTPException(status_code=404, detail="Chat not found")
 
     # Determine which field to use in update
     id_field = "id" if "id" in chat else "chat_id"
 
+    # Validate the message
+    message = message_data.message
+
+    # Prepare message for storage
+    message_dict = {"role": message.role, "content": message.content}
+
+    # Validate based on role
+    if message.role == "assistant":
+        if not message.signature or not message.message_id:
+            raise HTTPException(
+                status_code=400,
+                detail="Assistant messages require signature and message_id",
+            )
+
+        # Verify the signature
+        if not verify_message_signature(message.content, message.signature):
+            raise HTTPException(status_code=400, detail="Invalid message signature")
+
+        # Add signature and ID to stored message
+        message_dict["signature"] = message.signature
+        message_dict["message_id"] = message.message_id
+
+    elif message.role == "user":
+        # User messages don't need additional validation
+        pass
+    else:
+        # System messages should not be added via this endpoint
+        raise HTTPException(
+            status_code=400, detail="Cannot add system messages through this endpoint"
+        )
+
     # Update messages and timestamp
     db.chats.update_one(
         {id_field: chat_id},
-        {"$set": {"messages": chat_data.messages, "updated_at": datetime.utcnow()}},
+        {
+            "$push": {"messages": message_dict},
+            "$set": {"updated_at": datetime.utcnow()},
+        },
     )
 
-    return {"status": "updated"}
+    return {"status": "message added"}
 
 
 @app.get("/")

@@ -2,6 +2,7 @@
 let conversation = [];
 let currentChatId = null;
 let isNewChat = true;
+let unsavedMessages = []; // Track messages that haven't been saved to DB yet
 
 // DOM elements
 const messagesContainer = document.getElementById("messages-container");
@@ -183,6 +184,7 @@ async function loadChat(chatId) {
     currentChatId = chatId;
     isNewChat = false;
     conversation = chat.messages || [];
+    unsavedMessages = []; // Reset unsaved messages
 
     // Update chat title
     chatTitle.textContent = chat.title;
@@ -247,18 +249,67 @@ async function createNewChat(title) {
   }
 }
 
-// Update chat in database
-async function updateChat() {
-  if (!currentChatId) return;
+// Add a single message to the database
+async function saveMessage(message) {
+  if (!currentChatId) return false;
 
   try {
-    console.log("Updating chat with ID:", currentChatId);
-    await apiCall(`/api/chats/${currentChatId}`, "PUT", {
-      messages: conversation,
-    });
+    const endpoint = `/api/chats/${currentChatId}/messages`;
+    await apiCall(endpoint, "POST", { message });
+    return true;
   } catch (error) {
-    console.error("Error updating chat:", error);
+    console.error("Error saving message:", error);
+    return false;
   }
+}
+
+// Process and save unsaved messages
+async function processUnsavedMessages() {
+  if (unsavedMessages.length === 0) return;
+
+  // Process one message at a time to maintain order
+  const message = unsavedMessages[0];
+  const success = await saveMessage(message);
+
+  if (success) {
+    // Remove from unsaved list if successfully saved
+    unsavedMessages.shift();
+
+    // Continue processing remaining messages
+    if (unsavedMessages.length > 0) {
+      await processUnsavedMessages();
+    }
+  } else {
+    console.error("Failed to save message, will retry later:", message);
+  }
+}
+
+// Extract signature and message ID from assistant response
+function extractSignatureData(response) {
+  // Look for the special signature block at the end of the message
+  const signatureMatch = response.match(
+    /__MESSAGE_ID__:([^\n]+)\n__SIGNATURE__:([^\n]+)/
+  );
+
+  if (signatureMatch && signatureMatch.length === 3) {
+    // Remove the signature block from the visible message
+    const cleanContent = response
+      .replace(/__MESSAGE_ID__:[^\n]+\n__SIGNATURE__:[^\n]+/, "")
+      .trim();
+
+    return {
+      content: cleanContent,
+      message_id: signatureMatch[1],
+      signature: signatureMatch[2],
+    };
+  }
+
+  // If no signature found (should not happen)
+  return {
+    content: response,
+    message_id: null,
+    signature: null,
+  };
 }
 
 // Send message function
@@ -281,8 +332,17 @@ async function sendMessage() {
     welcomeScreen.remove();
   }
 
+  // Create user message
+  const userMessage = {
+    role: "user",
+    content: text,
+  };
+
   // Add user message to conversation
-  conversation.push({ role: "user", content: text });
+  conversation.push(userMessage);
+
+  // Add user message to unsaved list
+  unsavedMessages.push(userMessage);
 
   // Display user message
   addMessageToUI("user", text);
@@ -303,6 +363,9 @@ async function sendMessage() {
       return;
     }
   }
+
+  // Save user message to database
+  await processUnsavedMessages();
 
   // Scroll to bottom
   scrollToBottom();
@@ -329,18 +392,15 @@ async function sendMessage() {
     // Remove typing indicator
     removeTypingIndicator(assistantId);
 
-    // Create empty assistant message
-    let assistantMessage = { role: "assistant", content: "" };
-
-    // Add to conversation
-    conversation.push(assistantMessage);
-
-    // Add empty message to UI
-    const messageId = addMessageToUI("assistant", "");
-
     // Process streaming response
     const reader = response.body.getReader();
     const decoder = new TextDecoder("utf-8");
+
+    // Variables to collect the response
+    let assistantResponse = "";
+
+    // Add empty message to UI
+    const messageId = addMessageToUI("assistant", "");
 
     while (true) {
       const { value, done } = await reader.read();
@@ -350,17 +410,38 @@ async function sendMessage() {
       const chunk = decoder.decode(value, { stream: true });
 
       // Update assistant message
-      assistantMessage.content += chunk;
+      assistantResponse += chunk;
 
-      // Update UI
-      updateMessageInUI(messageId, assistantMessage.content);
+      // Extract signature and update UI
+      const { content } = extractSignatureData(assistantResponse);
+
+      // Update UI with the clean content (without signature)
+      updateMessageInUI(messageId, content);
 
       // Scroll to bottom as new content arrives
       scrollToBottom();
     }
 
-    // Update chat in database
-    updateChat();
+    // Process the full response with signature
+    const { content, message_id, signature } =
+      extractSignatureData(assistantResponse);
+
+    // Create the assistant message with verification data
+    const assistantMessage = {
+      role: "assistant",
+      content: content,
+      message_id: message_id,
+      signature: signature,
+    };
+
+    // Add to conversation array
+    conversation.push(assistantMessage);
+
+    // Add to unsaved messages
+    unsavedMessages.push(assistantMessage);
+
+    // Save the assistant message to database
+    await processUnsavedMessages();
   } catch (error) {
     console.error("Error:", error);
     addMessageToUI(
@@ -541,6 +622,7 @@ function scrollToBottom() {
 function startNewChat() {
   // Reset conversation
   conversation = [];
+  unsavedMessages = [];
 
   // Reset variables
   currentChatId = null;
