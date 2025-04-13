@@ -4,7 +4,7 @@ let currentChatId = null;
 let isNewChat = true;
 let unsavedMessages = []; // Track messages that haven't been saved to DB yet
 let enableDualResponses = true; // Flag to enable/disable dual response feature
-const dualResponseProbability = 0.3; // 30% chance of triggering dual responses
+const dualResponseProbability = 0.2; // 30% chance of triggering dual responses
 
 // DOM elements
 const messagesContainer = document.getElementById("messages-container");
@@ -354,12 +354,25 @@ function addDualResponsesContainer(id) {
   scrollToBottom();
 }
 
+function enhanceMarkdownFormatting(content) {
+  if (!content) return content;
+
+  let enhanced = content;
+
+  // // if you see "punctuation" + "1 space" + only 1 ("*" or "-") or ("Number" + "."), replace space with newline
+  // enhanced = enhanced.replace(/([.,;:!?])\s+([*+-]|\d+\.)/g, "$1\n$2");
+
+  return enhanced;
+}
+
 function updateResponseInDualContainer(elementId, content) {
   const responseElement = document.getElementById(elementId);
   if (responseElement) {
     const contentElement = responseElement.querySelector(".response-content");
     if (contentElement) {
-      contentElement.textContent = content;
+      contentElement.innerHTML = marked.parse(
+        enhanceMarkdownFormatting(content)
+      );
     }
   }
 }
@@ -748,7 +761,7 @@ function addMessageToUI(role, content) {
     messageText.appendChild(urgentLabel);
   }
 
-  messageBubble.textContent = content;
+  messageBubble.innerHTML = marked.parse(enhanceMarkdownFormatting(content));
 
   // Add disclaimer for certain medical advice
   if (
@@ -761,7 +774,7 @@ function addMessageToUI(role, content) {
     const disclaimer = document.createElement("div");
     disclaimer.classList.add("message-disclaimer");
     disclaimer.innerHTML =
-      '<i class="fas fa-info-circle"></i> This information is for educational purposes only and does not constitute medical advice.';
+      '<i class="fas fa-info-circle"></i> It is always better to consult a healthcare professional for personalized medical advice.';
     messageText.appendChild(disclaimer);
   }
 
@@ -780,7 +793,7 @@ function updateMessageInUI(messageId, content) {
     `#message-${messageId} .message-bubble`
   );
   if (messageBubble) {
-    messageBubble.textContent = content;
+    messageBubble.innerHTML = marked.parse(enhanceMarkdownFormatting(content));
   }
 }
 

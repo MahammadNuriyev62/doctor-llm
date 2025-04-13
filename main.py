@@ -165,7 +165,6 @@ def chat_stream(prompt: str):
         **inputs,
         streamer=streamer,
         max_new_tokens=1024,
-        eos_token_id=tokenizer.eos_token_id,
     )
 
     thread = threading.Thread(target=model.generate, kwargs=generation_kwargs)
@@ -175,6 +174,8 @@ def chat_stream(prompt: str):
     full_response = ""
 
     for token in streamer:
+        if "<|im_end|>" in token:
+            token = token.replace("<|im_end|>", "")
         full_response += token
         yield token
 

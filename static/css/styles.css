@@ -298,8 +298,21 @@ body {
 .message-bubble {
   font-size: 15px;
   line-height: 1.6;
-  white-space: pre-wrap;
-  word-break: break-word;
+
+  /* add space between every child */
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.message-bubble ol {
+  margin: 0;
+  margin-left: 20px;
+}
+
+.message-bubble ul {
+  margin: 0;
+  margin-left: 20px;
 }
 
 .typing-indicator {
