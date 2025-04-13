@@ -3,6 +3,8 @@ let conversation = [];
 let currentChatId = null;
 let isNewChat = true;
 let unsavedMessages = []; // Track messages that haven't been saved to DB yet
+let enableDualResponses = true; // Flag to enable/disable dual response feature
+const dualResponseProbability = 0.3; // 30% chance of triggering dual responses
 
 // DOM elements
 const messagesContainer = document.getElementById("messages-container");
@@ -14,6 +16,12 @@ const mobileMenuButton = document.getElementById("mobile-menu-btn");
 const sidebar = document.querySelector(".sidebar");
 const chatTitle = document.getElementById("chat-title");
 const chatHistoryList = document.getElementById("chat-history-list");
+
+// Add this function to generate a random boolean based on probability
+function shouldGenerateDualResponses() {
+  if (!enableDualResponses) return false;
+  return Math.random() < dualResponseProbability;
+}
 
 // Helper for API calls
 async function apiCall(endpoint, method = "GET", data = null) {
@@ -312,6 +320,253 @@ function extractSignatureData(response) {
   };
 }
 
+// Add functions to handle the dual responses UI
+function addDualResponsesContainer(id) {
+  const container = document.createElement("div");
+  container.id = `dual-responses-${id}`;
+  container.classList.add("dual-responses-container");
+
+  container.innerHTML = `
+    <div class="dual-responses-header">
+      <i class="fa-solid fa-robot"></i>
+      <span>Comparing two possible responses...</span>
+    </div>
+    <div class="dual-responses-content">
+      <div class="response-column" id="response1-${id}">
+        <div class="response-header">Option A</div>
+        <div class="response-content">Generating...</div>
+      </div>
+      <div class="response-column" id="response2-${id}">
+        <div class="response-header">Option B</div>
+        <div class="response-content">Generating...</div>
+      </div>
+    </div>
+    <div class="dual-responses-footer" id="choice-buttons-${id}" style="display: none;">
+      <p>Which response do you prefer?</p>
+      <div class="choice-buttons">
+        <button class="choice-button" id="choose-response1-${id}">Choose A</button>
+        <button class="choice-button" id="choose-response2-${id}">Choose B</button>
+      </div>
+    </div>
+  `;
+
+  messagesContainer.appendChild(container);
+  scrollToBottom();
+}
+
+function updateResponseInDualContainer(elementId, content) {
+  const responseElement = document.getElementById(elementId);
+  if (responseElement) {
+    const contentElement = responseElement.querySelector(".response-content");
+    if (contentElement) {
+      contentElement.textContent = content;
+    }
+  }
+}
+
+function showResponseChoiceButtons(id, response1, response2) {
+  const buttonsContainer = document.getElementById(`choice-buttons-${id}`);
+  if (buttonsContainer) {
+    buttonsContainer.style.display = "block";
+
+    // Add event listeners to the buttons
+    const button1 = document.getElementById(`choose-response1-${id}`);
+    const button2 = document.getElementById(`choose-response2-${id}`);
+
+    if (button1 && button2) {
+      button1.addEventListener("click", () => {
+        window.chooseResponse(id, response1, response2);
+      });
+
+      button2.addEventListener("click", () => {
+        window.chooseResponse(id, response2, response1);
+      });
+    }
+  }
+}
+
+function removeDualResponsesContainer(id) {
+  const container = document.getElementById(`dual-responses-${id}`);
+  if (container) {
+    container.remove();
+  }
+}
+
+// Function to submit pairwise feedback to the backend
+async function submitPairwiseFeedback(
+  prompt,
+  chosenResponse,
+  rejectedResponse
+) {
+  try {
+    const feedbackData = {
+      prompt: prompt,
+      chosen_response: chosenResponse,
+      rejected_response: rejectedResponse,
+      chat_id: currentChatId,
+    };
+
+    await apiCall("/api/feedback/pairwise", "POST", feedbackData);
+    console.log("Feedback submitted successfully");
+  } catch (error) {
+    console.error("Error submitting feedback:", error);
+  }
+}
+
+// Function to handle dual response generation
+async function generateDualResponses(userPrompt) {
+  // Show a container for the two responses
+  const dualResponsesId = Date.now();
+  addDualResponsesContainer(dualResponsesId);
+
+  // Generate two responses in parallel
+  const response1Promise = generateSingleResponse(
+    userPrompt,
+    `response1-${dualResponsesId}`
+  );
+  const response2Promise = generateSingleResponse(
+    userPrompt,
+    `response2-${dualResponsesId}`
+  );
+
+  // Wait for both to complete
+  const [response1, response2] = await Promise.all([
+    response1Promise,
+    response2Promise,
+  ]);
+
+  if (!response1 || !response2) {
+    // If either response failed, fall back to single response
+    removeDualResponsesContainer(dualResponsesId);
+
+    // Start over with single response if we had a failure
+    if (!response1 && !response2) {
+      return await generateSingleResponse(userPrompt);
+    }
+
+    // Use whichever response succeeded
+    return response1 || response2;
+  }
+
+  // Show choice buttons
+  showResponseChoiceButtons(dualResponsesId, response1, response2);
+
+  // Return a promise that will resolve when the user makes a choice
+  return new Promise((resolve) => {
+    // Store the resolve function on the container for later use
+    const container = document.getElementById(
+      `dual-responses-${dualResponsesId}`
+    );
+    container.dataset.resolveFunction = true;
+
+    // Set up event handler to resolve when choice is made
+    window.chooseResponse = (responseId, chosenResponse, rejectedResponse) => {
+      // Remove the container once a choice is made
+      removeDualResponsesContainer(responseId);
+
+      // Submit feedback about which response was chosen/rejected
+      submitPairwiseFeedback(userPrompt, chosenResponse, rejectedResponse);
+
+      // Return the chosen response
+      resolve(chosenResponse);
+    };
+  });
+}
+
+// Function to generate a single response
+async function generateSingleResponse(userPrompt, responseElementId = null) {
+  try {
+    // Prepare request to the server
+    const response = await fetch("/api/chat", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
+      },
+      body: JSON.stringify(conversation),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Server responded with ${response.status}`);
+    }
+
+    // Process streaming response
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder("utf-8");
+
+    // Variables to collect the response
+    let assistantResponse = "";
+
+    // If we're generating for dual responses, update the corresponding element
+    // Otherwise, add a new message to UI
+    const messageId = responseElementId || addMessageToUI("assistant", "");
+
+    while (true) {
+      const { value, done } = await reader.read();
+      if (done) break;
+
+      // Convert chunk to string
+      const chunk = decoder.decode(value, { stream: true });
+
+      // Update assistant message
+      assistantResponse += chunk;
+
+      // Extract signature and update UI
+      const { content } = extractSignatureData(assistantResponse);
+
+      // Update UI with the clean content (without signature)
+      if (responseElementId) {
+        // Update in dual response container
+        updateResponseInDualContainer(responseElementId, content);
+      } else {
+        // Normal update in message UI
+        updateMessageInUI(messageId, content);
+      }
+
+      // Scroll to bottom as new content arrives
+      scrollToBottom();
+    }
+
+    // Process the full response with signature
+    const { content, message_id, signature } =
+      extractSignatureData(assistantResponse);
+
+    // Create the assistant message with verification data
+    const assistantMessage = {
+      role: "assistant",
+      content: content,
+      message_id: message_id,
+      signature: signature,
+    };
+
+    // If this is a regular response (not part of dual), add it to conversation
+    if (!responseElementId) {
+      // Add to conversation array
+      conversation.push(assistantMessage);
+
+      // Add to unsaved messages
+      unsavedMessages.push(assistantMessage);
+
+      // Save the assistant message to database
+      await processUnsavedMessages();
+    }
+
+    return assistantMessage;
+  } catch (error) {
+    console.error("Error generating response:", error);
+
+    if (!responseElementId) {
+      // Only show error for main responses, not dual ones
+      addMessageToUI(
+        "system",
+        `Error: ${error.message || "Could not connect to the assistant"}`
+      );
+    }
+
+    return null;
+  }
+}
+
 // Send message function
 async function sendMessage() {
   const text = userInput.value.trim();
@@ -371,77 +626,43 @@ async function sendMessage() {
   scrollToBottom();
 
   try {
-    // Show typing indicator
-    const assistantId = Date.now();
-    addTypingIndicator(assistantId);
+    let assistantMessage;
 
-    // Prepare request to the server
-    const response = await fetch("/api/chat", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
-      },
-      body: JSON.stringify(conversation),
-    });
+    // Determine if we should show dual responses
+    if (shouldGenerateDualResponses()) {
+      // Show typing indicator initially
+      const assistantId = Date.now();
+      addTypingIndicator(assistantId);
 
-    if (!response.ok) {
-      throw new Error(`Server responded with ${response.status}`);
+      // Generate dual responses
+      assistantMessage = await generateDualResponses(text);
+
+      // Remove typing indicator after dual responses are complete
+      removeTypingIndicator(assistantId);
+
+      // Add the chosen message to the chat
+      addMessageToUI("assistant", assistantMessage.content);
+
+      // Add to conversation array
+      conversation.push(assistantMessage);
+
+      // Add to unsaved messages
+      unsavedMessages.push(assistantMessage);
+
+      // Save the assistant message to database
+      await processUnsavedMessages();
+    } else {
+      // Normal single response flow
+      // Show typing indicator
+      const assistantId = Date.now();
+      addTypingIndicator(assistantId);
+
+      // Generate single response
+      assistantMessage = await generateSingleResponse(text);
+
+      // Remove typing indicator
+      removeTypingIndicator(assistantId);
     }
-
-    // Remove typing indicator
-    removeTypingIndicator(assistantId);
-
-    // Process streaming response
-    const reader = response.body.getReader();
-    const decoder = new TextDecoder("utf-8");
-
-    // Variables to collect the response
-    let assistantResponse = "";
-
-    // Add empty message to UI
-    const messageId = addMessageToUI("assistant", "");
-
-    while (true) {
-      const { value, done } = await reader.read();
-      if (done) break;
-
-      // Convert chunk to string
-      const chunk = decoder.decode(value, { stream: true });
-
-      // Update assistant message
-      assistantResponse += chunk;
-
-      // Extract signature and update UI
-      const { content } = extractSignatureData(assistantResponse);
-
-      // Update UI with the clean content (without signature)
-      updateMessageInUI(messageId, content);
-
-      // Scroll to bottom as new content arrives
-      scrollToBottom();
-    }
-
-    // Process the full response with signature
-    const { content, message_id, signature } =
-      extractSignatureData(assistantResponse);
-
-    // Create the assistant message with verification data
-    const assistantMessage = {
-      role: "assistant",
-      content: content,
-      message_id: message_id,
-      signature: signature,
-    };
-
-    // Add to conversation array
-    conversation.push(assistantMessage);
-
-    // Add to unsaved messages
-    unsavedMessages.push(assistantMessage);
-
-    // Save the assistant message to database
-    await processUnsavedMessages();
   } catch (error) {
     console.error("Error:", error);
     addMessageToUI(

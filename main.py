@@ -431,3 +431,84 @@ async def chat_by_id(request: Request, chat_id: str):
     return templates.TemplateResponse(
         "chat.html", {"request": request, "chat_id": chat_id}
     )
+
+
+# Add these new classes after the other model definitions
+class PairwiseFeedback(BaseModel):
+    prompt: str
+    chosen_response: MessageWithSignature
+    rejected_response: MessageWithSignature
+    chat_id: str
+
+
+# Add this new endpoint to store pairwise feedback
+@app.post("/api/feedback/pairwise")
+async def store_pairwise_feedback(
+    feedback: PairwiseFeedback, user=Depends(get_current_user)
+):
+    """
+    Store pairwise feedback for model improvement
+    """
+    try:
+        # Verify the chat belongs to the user
+        chat = db.chats.find_one(
+            {
+                "$or": [
+                    {"chat_id": feedback.chat_id, "user_id": user["user_id"]},
+                    {"id": feedback.chat_id, "user_id": user["user_id"]},
+                ]
+            }
+        )
+
+        if not chat:
+            raise HTTPException(status_code=404, detail="Chat not found")
+
+        # Get the conversation history up to the prompt
+        conversation_history = []
+        for msg in chat.get("messages", []):
+            conversation_history.append(msg)
+
+        # Find the last user message (which should be the prompt)
+        # In case there are multiple interactions, we want to make sure
+        # we're using the right prompt that generated these two responses
+
+        # Create the feedback documents
+        chosen_conversation = conversation_history.copy()
+        chosen_conversation.append({"role": "user", "content": feedback.prompt})
+        chosen_conversation.append(
+            {
+                "role": "assistant",
+                "content": feedback.chosen_response.content,
+                "message_id": feedback.chosen_response.message_id,
+                "signature": feedback.chosen_response.signature,
+            }
+        )
+
+        rejected_conversation = conversation_history.copy()
+        rejected_conversation.append({"role": "user", "content": feedback.prompt})
+        rejected_conversation.append(
+            {
+                "role": "assistant",
+                "content": feedback.rejected_response.content,
+                "message_id": feedback.rejected_response.message_id,
+                "signature": feedback.rejected_response.signature,
+            }
+        )
+
+        # Store the feedback
+        feedback_doc = {
+            "user_id": user["user_id"],
+            "chat_id": feedback.chat_id,
+            "prompt": feedback.prompt,
+            "chosen": chosen_conversation,
+            "rejected": rejected_conversation,
+            "timestamp": datetime.utcnow(),
+        }
+
+        # Insert into the pairwise_human_feedback collection
+        db.pairwise_human_feedback.insert_one(feedback_doc)
+
+        return {"status": "feedback stored"}
+    except Exception as e:
+        print(f"Error storing feedback: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error storing feedback: {str(e)}")
