@@ -67,4 +67,8 @@ docker-compose down --rmi all
 - **Deployment**: The app is available as a Docker image on Docker Hub, allowing straightforward pulling and deployment.
 - **Continuous Integration**: A simple CI pipeline rebuilds and repushes the Docker image automatically upon merges to the main branch.
 
+### Examples
 
+The example of how feedback is collected can be seen below:
+
+<img src="./assets/screenshot_of_human_feedback_collection.png" alt="drawing" width="600"/>
