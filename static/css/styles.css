@@ -306,13 +306,11 @@ body {
 }
 
 .message-bubble ol {
-  margin: 0;
-  margin-left: 20px;
+  padding-left: 20px;
 }
 
 .message-bubble ul {
-  margin: 0;
-  margin-left: 20px;
+  padding-left: 20px;
 }
 
 .typing-indicator {
@@ -514,6 +512,14 @@ body {
   /* Remove the overflow and max-height restrictions */
   overflow-y: visible;
   height: auto;
+}
+
+.response-content ol {
+  padding-left: 20px;
+}
+
+.response-content ul {
+  padding-left: 20px;
 }
 
 .dual-responses-footer {

@@ -846,9 +846,8 @@ function removeTypingIndicator(id) {
   }
 }
 
-// Scroll to bottom of messages
 function scrollToBottom() {
-  messagesContainer.scrollTop = messagesContainer.scrollHeight;
+  // messagesContainer.scrollTop = messagesContainer.scrollHeight;
 }
 
 // Start a new chat
