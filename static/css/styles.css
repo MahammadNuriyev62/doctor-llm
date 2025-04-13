@@ -440,6 +440,8 @@ body {
 
 /* Dual Responses styles - add to styles.css */
 
+/* Dual Responses styles - add to styles.css */
+
 .dual-responses-container {
   display: flex;
   flex-direction: column;
@@ -509,8 +511,9 @@ body {
   white-space: pre-wrap;
   word-break: break-word;
   min-height: 150px;
-  overflow-y: auto;
-  max-height: 300px;
+  /* Remove the overflow and max-height restrictions */
+  overflow-y: visible;
+  height: auto;
 }
 
 .dual-responses-footer {
