@@ -358,8 +358,11 @@ function enhanceMarkdownFormatting(content) {
 
   let enhanced = content;
 
-  // // if you see "punctuation" + "1 space" + only 1 ("*" or "-") or ("Number" + "."), replace space with newline
+  // if you see "punctuation" + "1 space" + only 1 ("*" or "-") or ("Number" + "."), replace space with newline
   // enhanced = enhanced.replace(/([.,;:!?])\s+([*+-]|\d+\.)/g, "$1\n$2");
+
+  // if there is no new line then "**" then "some text" then "**" and then "new line", add new line in the beginning
+  // enhanced = enhanced.replace(/(^|\n)(\*\*.*?\*\*)\n/g, "$1\n$2\n");
 
   return enhanced;
 }
